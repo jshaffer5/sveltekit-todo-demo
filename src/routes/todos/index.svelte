@@ -32,6 +32,7 @@
 		text: string;
 		done: boolean;
 		pending_delete: boolean;
+		index: number;
 	};
 
 	export let todos: Todo[];
@@ -42,6 +43,7 @@
 		todos = todos.map((t) => {
 			if (t.uid === todo.uid) return todo;
 			return t;
+			// console.log('position: ', t.pos) // Debug
 		});
 	}
 </script>
@@ -51,7 +53,7 @@
 </svelte:head>
 
 <div class="todos">
-	<h1>Todos</h1>
+	<h1>My Todos</h1>
 
 	<form
 		class="new"
@@ -60,6 +62,7 @@
 		use:enhance={{
 			result: async (res, form) => {
 				const created = await res.json();
+				created.index = todos.length;
 				todos = [...todos, created];
 
 				form.reset();
@@ -68,6 +71,7 @@
 	>
 		<input name="text" aria-label="Add todo" placeholder="+ tap to add a todo" />
 	</form>
+	{@debug todos}
 
 	{#each todos as todo (todo.uid)}
 		<div
