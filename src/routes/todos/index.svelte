@@ -46,6 +46,20 @@
 			// console.log('position: ', t.pos) // Debug
 		});
 	}
+
+	function allowDrop(ev: Event) {
+	  ev.preventDefault();
+	}
+	
+	function drag(ev: Event) {
+	  ev.dataTransfer.setData("text", ev.target.id);
+	}
+	
+	function drop(ev: Event) {
+	  ev.preventDefault();
+	  let data = ev.dataTransfer.getData("text");
+	//   ev.target.appendChild(document.getElementById(data)); // output: Failed to execute 'appendChild' on 'Node': parameter 1 is not of type 'Node'.
+	}
 </script>
 
 <svelte:head>
@@ -71,7 +85,7 @@
 	>
 		<input name="text" aria-label="Add todo" placeholder="+ tap to add a todo" />
 	</form>
-	{@debug todos}
+	<!-- {@debug todos} -->
 
 	{#each todos as todo (todo.uid)}
 		<div
@@ -79,6 +93,7 @@
 			class:done={todo.done}
 			transition:scale|local={{ start: 0.7 }}
 			animate:flip={{ duration: 200 }}
+			draggable="true" on:dragstart={drag} on:dragover={allowDrop} on:drop={drop}
 		>
 			<form
 				action="/todos/{todo.uid}.json?_method=patch"
